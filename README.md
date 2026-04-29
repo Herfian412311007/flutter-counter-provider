@@ -1,22 +1,18 @@
-<<<<<<< HEAD
-# tugas5
-
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-=======
 # flutter-counter-provider
-flutter
->>>>>>> deb0860793f75e6322d71212d444a2ca637f301d
+
+Project Flutter dengan Provider untuk fitur counter (increment & decrement).
+
+## Cara Menjalankan
+
+1. Jalankan `flutter pub get`
+2. Run di device dengan `flutter run`
+
+## Screenshot
+
+![Screenshot](screenshot/flutter-counter-provider.jpeg)
+
+## Identitas
+
+- Nama: Herfian Nurandriansyah
+- NIM: 412311007
+- Prodi: Sistem Informasi
