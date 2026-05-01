@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'user.dart';
+import '../models/user.dart'; // perhatikan path ke folder models
 
 class ApiService {
   Future<List<User>> fetchUsers() async {
