@@ -1,16 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'providers/counter_provider.dart';
-import 'services/api_service.dart';
-import 'models/user.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => CounterProvider(),
-      child: const MyApp(),
-    ),
-  );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -18,7 +10,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(title: 'Tugas 5 Demo', home: HomePage());
+    return const MaterialApp(
+      title: 'Tugas 3 - Penyimpanan Data Lokal',
+      home: HomePage(),
+    );
   }
 }
 
@@ -30,69 +25,55 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late Future<List<User>> _futureUsers;
+  final TextEditingController _controller = TextEditingController();
+  String _savedName = "";
 
   @override
   void initState() {
     super.initState();
-    _futureUsers = ApiService().fetchUsers();
+    _loadName();
+  }
+
+  // Ambil data dari SharedPreferences
+  void _loadName() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _savedName = prefs.getString('username') ?? "";
+    });
+  }
+
+  // Simpan data ke SharedPreferences
+  void _saveName() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('username', _controller.text);
+    setState(() {
+      _savedName = _controller.text;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final counter = Provider.of<CounterProvider>(context);
-
     return Scaffold(
-      appBar: AppBar(title: const Text("Tugas 5 - Counter & Users")),
-      body: Column(
-        children: [
-          const SizedBox(height: 20),
-          Text(
-            "Counter: ${counter.count}",
-            style: const TextStyle(fontSize: 24),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: counter.increment,
-                child: const Text("+"),
-              ),
-              const SizedBox(width: 20),
-              ElevatedButton(
-                onPressed: counter.decrement,
-                child: const Text("-"),
-              ),
-            ],
-          ),
-          const Divider(height: 40),
-          Expanded(
-            child: FutureBuilder<List<User>>(
-              future: _futureUsers,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text("Error: ${snapshot.error}"));
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(child: Text("Tidak ada data"));
-                } else {
-                  final users = snapshot.data!;
-                  return ListView.builder(
-                    itemCount: users.length,
-                    itemBuilder: (context, index) {
-                      final user = users[index];
-                      return ListTile(
-                        title: Text(user.name),
-                        subtitle: Text(user.email),
-                      );
-                    },
-                  );
-                }
-              },
+      appBar: AppBar(title: const Text("Tugas 3: SharedPreferences")),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: _controller,
+              decoration: const InputDecoration(labelText: "Masukkan Nama"),
             ),
-          ),
-        ],
+            const SizedBox(height: 10),
+            ElevatedButton(onPressed: _saveName, child: const Text("Simpan")),
+            const SizedBox(height: 20),
+            Text(
+              _savedName.isEmpty
+                  ? "Belum ada nama tersimpan"
+                  : "Nama tersimpan: $_savedName",
+              style: const TextStyle(fontSize: 18),
+            ),
+          ],
+        ),
       ),
     );
   }
