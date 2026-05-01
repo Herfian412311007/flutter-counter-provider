@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Tugas 3: Penyimpanan Data Lokal
 
 ## Identitas
@@ -24,3 +25,7 @@ Data tetap tersimpan meskipun aplikasi ditutup atau di-restart.
 ## Kode Utama
 
 Lihat file `lib/main.dart` untuk implementasi lengkap.
+=======
+# tugas3-penyimpanan-lokal
+Flutter project Tugas 3 - SharedPreferences
+>>>>>>> 9a9335dbb21b7c90b3af4d2b035633900819fcce
