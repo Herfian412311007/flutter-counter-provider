@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'counter_provider.dart';
+import 'providers/counter_provider.dart';
+import 'services/api_service.dart';
+import 'models/user.dart';
 
 void main() {
   runApp(
@@ -16,45 +18,81 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(title: 'Counter Provider Demo', home: CounterPage());
+    return const MaterialApp(title: 'Tugas 5 Demo', home: HomePage());
   }
 }
 
-class CounterPage extends StatelessWidget {
-  const CounterPage({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  late Future<List<User>> _futureUsers;
+
+  @override
+  void initState() {
+    super.initState();
+    _futureUsers = ApiService().fetchUsers();
+  }
 
   @override
   Widget build(BuildContext context) {
     final counter = Provider.of<CounterProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Counter Provider")),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text("Nilai Counter:", style: TextStyle(fontSize: 20)),
-            Text(
-              "${counter.count}",
-              style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+      appBar: AppBar(title: const Text("Tugas 5 - Counter & Users")),
+      body: Column(
+        children: [
+          const SizedBox(height: 20),
+          Text(
+            "Counter: ${counter.count}",
+            style: const TextStyle(fontSize: 24),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: counter.increment,
+                child: const Text("+"),
+              ),
+              const SizedBox(width: 20),
+              ElevatedButton(
+                onPressed: counter.decrement,
+                child: const Text("-"),
+              ),
+            ],
+          ),
+          const Divider(height: 40),
+          Expanded(
+            child: FutureBuilder<List<User>>(
+              future: _futureUsers,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text("Error: ${snapshot.error}"));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(child: Text("Tidak ada data"));
+                } else {
+                  final users = snapshot.data!;
+                  return ListView.builder(
+                    itemCount: users.length,
+                    itemBuilder: (context, index) {
+                      final user = users[index];
+                      return ListTile(
+                        title: Text(user.name),
+                        subtitle: Text(user.email),
+                      );
+                    },
+                  );
+                }
+              },
             ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: counter.increment,
-                  child: const Text("+"),
-                ),
-                const SizedBox(width: 20),
-                ElevatedButton(
-                  onPressed: counter.decrement,
-                  child: const Text("-"),
-                ),
-              ],
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
